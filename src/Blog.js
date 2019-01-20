@@ -1,4 +1,5 @@
 import React from "react";
+import config from "./config";
 
 class Blog extends React.Component {
   constructor(props) {
@@ -9,33 +10,59 @@ class Blog extends React.Component {
     this.handleTitleUpdate = this.handleTitleUpdate.bind(this);
     this.handleBodyUpdate = this.handleBodyUpdate.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
-    this.enableEditModeForBlog = this.enableEditModeForBlog.bind(this);
   }
 
   state = {
     retrievedData: false,
     blogs: [],
-    currentId: 0,
+    currentId: -1,
     title: "",
     body: "",
-    objectToUpdate: {},
-    updateView: false,
     updateTitle: "",
     updateBody: ""
   };
 
   componentDidMount() {
-    // this.getBlogsFromDb();
+    this.getBlogsFromDb();
   }
 
   getBlogsFromDb = () => {
-    fetch("/blogs/api/get")
+    fetch(config.API_GET_ENDPOINT, { mode: "cors" })
       .then(data => data.json())
-      .then(res => this.setState({ blogs: res.data }));
+      .then(res => {
+        this.setState({ blogs: this.parseBlogs(res.data) });
+        this.updateCurrentId();
+        console.log(this.parseBlogs(res.data));
+      });
+  };
+
+  updateCurrentId = () => {
+    if (this.state.blogs.length) {
+      let maxId = this.state.blogs.reduce((prev, current) =>
+        prev.id > current.id ? prev.id : current.id
+      );
+      this.setState({ currentId: maxId });
+      console.log(maxId);
+    }
+  };
+
+  parseBlogs = data => {
+    return data
+      .map(blog => {
+        return {
+          id: blog.id,
+          title: blog.title,
+          body: blog.body,
+          createdAt: new Date(blog.createdAt).toUTCString(),
+          editMode: false
+        };
+      })
+      .sort((a, b) => (a.id < b.id ? 1 : a.id > b.id ? -1 : 0));
   };
 
   addBlogToDb = () => {
     let newBlogData = {
+      id: this.state.currentId + 1,
       title: this.state.title,
       body: this.state.body
     };
@@ -47,10 +74,15 @@ class Blog extends React.Component {
       },
       body: JSON.stringify(newBlogData)
     };
-    fetch("/blogs/api/post", fetchParams).then(response => response.json());
+
+    fetch(config.API_CREATE_ENDPOINT, fetchParams)
+      .then(promise => promise.json())
+      .then(res => console.log(res));
   };
 
-  deleteBlogFromDb = () => { };
+  updateBlogToDb = () => {};
+
+  deleteBlogFromDb = () => {};
 
   handleTitleChange(e) {
     this.setState({ title: e.target.value });
@@ -60,21 +92,44 @@ class Blog extends React.Component {
     this.setState({ body: e.target.value });
   }
 
+  handleTitleUpdate(e) {
+    this.setState({ updateTitle: e.target.value });
+  }
+
+  handleBodyUpdate(e) {
+    this.setState({ updateBody: e.target.value });
+  }
+
   handleSubmit(e) {
     e.preventDefault();
+    this.addBlogToDb();
     this.setState({
       blogs: [
         {
-          id: this.state.currentId,
+          id: this.state.currentId + 1,
           title: this.state.title,
           body: this.state.body,
           editMode: false
         },
         ...this.state.blogs
       ],
-      currentId: this.state.currentId + 1
+      currentId: this.state.currentId + 1,
+      title: "",
+      body: ""
     });
-    this.setState({ title: "", body: "" });
+  }
+
+  handleUpdate(index, title, body) {
+    let updatedBlogs = this.state.blogs;
+    let newTitle =
+      this.state.updateTitle === "" ? title : this.state.updateTitle;
+    let newBody = this.state.updateBody === "" ? body : this.state.updateBody;
+    updatedBlogs[index] = {
+      title: newTitle,
+      body: newBody,
+      editMode: !updatedBlogs[index].editMode
+    };
+    this.setState({ ublogs: updatedBlogs, pdateTitle: "", updateBody: "" });
   }
 
   removeBlogPost = blogTitle => {
@@ -86,36 +141,13 @@ class Blog extends React.Component {
     });
   };
 
-  enableEditModeForBlog(index) {
+  enableEditModeForBlog = index => {
     let updatedBlogs = this.state.blogs;
     updatedBlogs[index].editMode = !updatedBlogs[index].editMode;
     this.setState({
       blogs: updatedBlogs
     });
-  }
-
-  handleTitleUpdate(e) {
-    this.setState({ updateTitle: e.target.value });
-  }
-
-  handleBodyUpdate(e) {
-    this.setState({ updateBody: e.target.value });
-  }
-
-  handleUpdate(index, title, body) {
-    let updatedBlogs = this.state.blogs;
-    let newTitle = this.state.updateTitle === "" ? title : this.state.updateTitle;
-    let newBody = this.state.updateBody === "" ? body : this.state.updateBody;
-    updatedBlogs[index] = {
-      title: newTitle,
-      body: newBody
-    };
-
-    this.setState({
-      blogs: updatedBlogs
-    });
-    this.setState({ updateTitle: "", updateBody: "" });
-  }
+  };
 
   render() {
     return (

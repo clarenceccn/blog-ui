@@ -1,0 +1,4 @@
+{
+    "API_CREATE_ENDPOINT" : "http://localhost:8080/blogs/api/post",
+    "API_GET_ENDPOINT" : "http://localhost:8080/blogs/api/get"
+}
