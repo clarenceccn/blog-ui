@@ -6,14 +6,22 @@ class Blog extends React.Component {
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleBodyChange = this.handleBodyChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleTitleUpdate = this.handleTitleUpdate.bind(this);
+    this.handleBodyUpdate = this.handleBodyUpdate.bind(this);
+    this.handleUpdate = this.handleUpdate.bind(this);
+    this.enableEditModeForBlog = this.enableEditModeForBlog.bind(this);
   }
 
   state = {
     retrievedData: false,
     blogs: [],
+    currentId: 0,
     title: "",
     body: "",
-    objectToUpdate: {}
+    objectToUpdate: {},
+    updateView: false,
+    updateTitle: "",
+    updateBody: ""
   };
 
   componentDidMount() {
@@ -42,7 +50,7 @@ class Blog extends React.Component {
     fetch("/blogs/api/post", fetchParams).then(response => response.json());
   };
 
-  deleteBlogFromDb = () => {};
+  deleteBlogFromDb = () => { };
 
   handleTitleChange(e) {
     this.setState({ title: e.target.value });
@@ -56,12 +64,17 @@ class Blog extends React.Component {
     e.preventDefault();
     this.setState({
       blogs: [
-        { title: this.state.title, body: this.state.body },
+        {
+          id: this.state.currentId,
+          title: this.state.title,
+          body: this.state.body,
+          editMode: false
+        },
         ...this.state.blogs
-      ]
+      ],
+      currentId: this.state.currentId + 1
     });
-    this.setState({ title: "" });
-    this.setState({ body: "" });
+    this.setState({ title: "", body: "" });
   }
 
   removeBlogPost = blogTitle => {
@@ -72,6 +85,37 @@ class Blog extends React.Component {
       })
     });
   };
+
+  enableEditModeForBlog(index) {
+    let updatedBlogs = this.state.blogs;
+    updatedBlogs[index].editMode = !updatedBlogs[index].editMode;
+    this.setState({
+      blogs: updatedBlogs
+    });
+  }
+
+  handleTitleUpdate(e) {
+    this.setState({ updateTitle: e.target.value });
+  }
+
+  handleBodyUpdate(e) {
+    this.setState({ updateBody: e.target.value });
+  }
+
+  handleUpdate(index, title, body) {
+    let updatedBlogs = this.state.blogs;
+    let newTitle = this.state.updateTitle === "" ? title : this.state.updateTitle;
+    let newBody = this.state.updateBody === "" ? body : this.state.updateBody;
+    updatedBlogs[index] = {
+      title: newTitle,
+      body: newBody
+    };
+
+    this.setState({
+      blogs: updatedBlogs
+    });
+    this.setState({ updateTitle: "", updateBody: "" });
+  }
 
   render() {
     return (
@@ -104,8 +148,38 @@ class Blog extends React.Component {
               <button onClick={() => this.removeBlogPost(blog.title)}>
                 Delete
               </button>
-              <div>Title: {blog.title}</div>
-              <div> {blog.body}</div>
+              <button onClick={() => this.enableEditModeForBlog(index)}>
+                Edit Mode
+              </button>
+              {blog.editMode && (
+                <div>
+                  <label>Title: {blog.title}</label>
+                  <input
+                    type="text"
+                    value={this.state.updateTitle}
+                    onChange={this.handleTitleUpdate}
+                  />
+                  <label>Body: {blog.body} </label>
+                  <textarea
+                    type="text"
+                    value={this.state.updateBody}
+                    onChange={this.handleBodyUpdate}
+                  />
+                  <input
+                    type="button"
+                    value="Save"
+                    onClick={() =>
+                      this.handleUpdate(index, blog.title, blog.body)
+                    }
+                  />
+                </div>
+              )}
+              {!blog.editMode && (
+                <div>
+                  <div>Title: {blog.title}</div>
+                  <div> {blog.body}</div>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -113,5 +187,4 @@ class Blog extends React.Component {
     );
   }
 }
-
 export default Blog;
