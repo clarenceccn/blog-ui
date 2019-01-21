@@ -61,7 +61,12 @@ class Blog extends React.Component {
   };
 
   addBlogToDb = () => {
-    this.postHelper(config.API_CREATE_ENDPOINT, this.state.currentId + 1, this.state.title, this.state.body);
+    this.postHelper(
+      config.API_CREATE_ENDPOINT,
+      this.state.currentId + 1,
+      this.state.title,
+      this.state.body
+    );
   };
 
   updateBlogToDb = (id, title, body) => {
@@ -88,7 +93,19 @@ class Blog extends React.Component {
       .then(res => console.log(res));
   };
 
-  deleteBlogFromDb = () => { };
+  deleteBlogFromDb = id => {
+    let fetchParams = {
+      method: "DELETE",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ id: id })
+    };
+    fetch(config.API_DELETE_ENDPOINT, fetchParams)
+      .then(data => console.log(data.json()))
+      .then(res => console.log(res));
+  };
 
   handleTitleChange(e) {
     this.setState({ title: e.target.value });
@@ -137,14 +154,14 @@ class Blog extends React.Component {
     this.updateBlogToDb(updatedBlogs[index].id, newTitle, newBody);
   }
 
-  removeBlogPost = blogTitle => {
-    console.log(blogTitle);
+  removeBlogPost = id => {
+    console.log(id);
     this.setState({
-      blogs: this.state.blogs.filter(e => {
-        return e.title !== blogTitle;
+      blogs: this.state.blogs.filter(blog => {
+        return blog.id !== id;
       })
     });
-    this.deleteBlogFromDb();
+    this.deleteBlogFromDb(id);
   };
 
   enableEditModeForBlog = index => {
@@ -181,7 +198,7 @@ class Blog extends React.Component {
         <div className="listing">
           {this.state.blogs.map((blog, index) => (
             <div key={index}>
-              <button onClick={() => this.removeBlogPost(blog.title)}>
+              <button onClick={() => this.removeBlogPost(blog.id)}>
                 Delete
               </button>
               <button onClick={() => this.enableEditModeForBlog(index)}>
