@@ -61,10 +61,18 @@ class Blog extends React.Component {
   };
 
   addBlogToDb = () => {
-    let newBlogData = {
-      id: this.state.currentId + 1,
-      title: this.state.title,
-      body: this.state.body
+    this.postHelper(config.API_CREATE_ENDPOINT, this.state.currentId + 1, this.state.title, this.state.body);
+  };
+
+  updateBlogToDb = (id, title, body) => {
+    this.postHelper(config.API_UPDATE_ENDPOINT, id, title, body);
+  };
+
+  postHelper = (endpoint, id, title, body) => {
+    let updateBlogData = {
+      id: id,
+      title: title,
+      body: body
     };
     let fetchParams = {
       method: "POST",
@@ -72,17 +80,15 @@ class Blog extends React.Component {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(newBlogData)
+      body: JSON.stringify(updateBlogData)
     };
 
-    fetch(config.API_CREATE_ENDPOINT, fetchParams)
-      .then(promise => promise.json())
+    fetch(endpoint, fetchParams)
+      .then(promise => console.log(promise))
       .then(res => console.log(res));
   };
 
-  updateBlogToDb = () => {};
-
-  deleteBlogFromDb = () => {};
+  deleteBlogFromDb = () => { };
 
   handleTitleChange(e) {
     this.setState({ title: e.target.value });
@@ -124,12 +130,11 @@ class Blog extends React.Component {
     let newTitle =
       this.state.updateTitle === "" ? title : this.state.updateTitle;
     let newBody = this.state.updateBody === "" ? body : this.state.updateBody;
-    updatedBlogs[index] = {
-      title: newTitle,
-      body: newBody,
-      editMode: !updatedBlogs[index].editMode
-    };
-    this.setState({ ublogs: updatedBlogs, pdateTitle: "", updateBody: "" });
+    updatedBlogs[index].title = newTitle;
+    updatedBlogs[index].body = newBody;
+    updatedBlogs[index].editMode = !updatedBlogs[index].editMode;
+    this.setState({ blogs: updatedBlogs, updateTitle: "", updateBody: "" });
+    this.updateBlogToDb(updatedBlogs[index].id, newTitle, newBody);
   }
 
   removeBlogPost = blogTitle => {
@@ -139,14 +144,13 @@ class Blog extends React.Component {
         return e.title !== blogTitle;
       })
     });
+    this.deleteBlogFromDb();
   };
 
   enableEditModeForBlog = index => {
     let updatedBlogs = this.state.blogs;
     updatedBlogs[index].editMode = !updatedBlogs[index].editMode;
-    this.setState({
-      blogs: updatedBlogs
-    });
+    this.setState({ blogs: updatedBlogs });
   };
 
   render() {
