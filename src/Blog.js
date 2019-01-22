@@ -1,5 +1,6 @@
 import React from "react";
 import config from "./config";
+import "./Blog.css";
 
 class Blog extends React.Component {
   constructor(props) {
@@ -195,46 +196,86 @@ class Blog extends React.Component {
             <input type="submit" value="Submit" />
           </form>
         </div>
-        <div className="listing">
-          {this.state.blogs.map((blog, index) => (
-            <div key={index}>
-              <button onClick={() => this.removeBlogPost(blog.id)}>
-                Delete
-              </button>
-              <button onClick={() => this.enableEditModeForBlog(index)}>
-                Edit Mode
-              </button>
-              {blog.editMode && (
-                <div>
-                  <label>Title: {blog.title}</label>
-                  <input
-                    type="text"
-                    value={this.state.updateTitle}
-                    onChange={this.handleTitleUpdate}
-                  />
-                  <label>Body: {blog.body} </label>
-                  <textarea
-                    type="text"
-                    value={this.state.updateBody}
-                    onChange={this.handleBodyUpdate}
-                  />
-                  <input
-                    type="button"
-                    value="Save"
-                    onClick={() =>
-                      this.handleUpdate(index, blog.title, blog.body)
-                    }
-                  />
+        <div className="posts-panel">
+          <header className="panel-header">
+            <h1 className="panel-title"> Featured Blogs </h1>
+          </header>
+          <div className="panel-content">
+            <section className="posts-list">
+              {this.state.blogs.map((blog, index) => (
+                <div className="post-item" key={index}>
+                  <a href="#" className="post-thumbnail">
+                    <img
+                      src="https://static.pexels.com/photos/66274/sunset-poppy-backlight-66274.jpeg"
+                      alt=""
+                    />
+                  </a>
+                  <div className="post-text">
+                    <a href="#">
+                      <h3 className="post-title">{blog.title}</h3>
+                    </a>
+                    <div className="post-meta">
+                      <span className="meta">
+                        <span
+                          className="meta-icon fa fa-user-circle-o"
+                          aria-hidden="true"
+                        />
+                        <a className="meta-text">Clarence Nguyen</a>
+                      </span>
+                      <span className="meta">
+                        <span
+                          className="meta-icon fa fa-clock-o"
+                          aria-hidden="true"
+                        />
+                        <span className="meta-text">{blog.createdAt}</span>
+                      </span>
+                    </div>
+                    <div className="post-summary">
+                      <p>
+                        {blog.body}
+                        <a href="#" className="post-read-more">
+                          Read more
+                          <span
+                            className="fa fa-chevron-circle-right"
+                            aria-hidden="true"
+                          />
+                        </a>
+                      </p>
+                      <button onClick={() => this.removeBlogPost(blog.id)}>
+                        Delete
+                      </button>
+                      <button onClick={() => this.enableEditModeForBlog(index)}>
+                        Edit Mode
+                      </button>
+                      {blog.editMode && (
+                        <div>
+                          <label>Title: {blog.title}</label>
+                          <input
+                            type="text"
+                            value={this.state.updateTitle}
+                            onChange={this.handleTitleUpdate}
+                          />
+                          <label>Body: {blog.body} </label>
+                          <textarea
+                            type="text"
+                            value={this.state.updateBody}
+                            onChange={this.handleBodyUpdate}
+                          />
+                          <input
+                            type="button"
+                            value="Save"
+                            onClick={() =>
+                              this.handleUpdate(index, blog.title, blog.body)
+                            }
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              )}
-              {!blog.editMode && (
-                <div>
-                  <div>Title: {blog.title}</div>
-                  <div> {blog.body}</div>
-                </div>
-              )}
-            </div>
-          ))}
+              ))}
+            </section>
+          </div>
         </div>
       </div>
     );
