@@ -36,8 +36,8 @@ const Nav = () => (
       <li><Link to="/">Blogs</Link></li>
       <li><Link to="/about">About</Link></li>
       <li><Link to="/contact">Contact Me</Link></li>
-      <li><Link to="/editor">Editor (Admin Access only)</Link></li>
-      <li><Link to="/blogUpdater">Blog Updater (Admin Access only)</Link></li>
+      <li><Link to="/editor">Editor (Restricted Access)</Link></li>
+      <li><Link to="/blogUpdater">Blog Updater (Restricted Access)</Link></li>
     </ul>
   </nav>
 );

@@ -147,7 +147,7 @@ class BlogView extends React.Component {
                     <div className="post-summary">
                       <p>
                         {blog.body} 
-                        <a href="#" className="post-read-more">
+                        <a href="www.google.com" className="post-read-more">
                           Read more
                           <span
                             className="fa fa-chevron-circle-right"

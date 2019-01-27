@@ -8,55 +8,6 @@
     margin: 0 auto;
 }
 
-.create-form {
-  flex: 0 1 100%;
-  margin-right: auto;
-  margin-left: auto;
-  width: 100vw;
-  padding-right: 0.625rem;
-  padding-left: 0.625rem;
-  margin: 1.25rem 0.625rem;
-  background-color: #fefefe;
-  border-radius: 0;
-  box-shadow: 0 0 0.25rem 0 rgba(0, 0, 0, 0.2);
-}
-
-/* Below is for nav  */
-
-.hover-underline-menu {
-  width: 100%;
-}
-
-.hover-underline-menu .menu {
-  background-color: #2C3840;
-}
-
-.hover-underline-menu .menu a {
-  color: #fefefe;
-  padding: 1.2rem 1.5rem;
-}
-
-.hover-underline-menu .menu .underline-from-center {
-  position: relative;
-}
-
-.hover-underline-menu .menu .underline-from-center::after {
-  content: "";
-  position: absolute;
-  top: calc(100% - 0.125rem);
-  border-bottom: 0.125rem solid #fefefe;
-  left: 50%;
-  right: 50%;
-  transition: all 0.5s ease;
-}
-
-.hover-underline-menu .menu .underline-from-center:hover::after {
-  left: 0;
-  right: 0;
-  transition: all 0.5s ease;
-}
-
-
 /* Below is for posts  */
 
 .posts-panel {
@@ -500,5 +451,5 @@ screen and (min-width: 40em) {
 }
 
 .posts-panel.grid .posts-list .post-read-more {
-    display: none;
+    display: block;
 }
