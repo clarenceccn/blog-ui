@@ -1,27 +1,22 @@
-import React from "react";
-import config from "./config";
-import "./Blog.css";
+import React from 'react';
+import config from './config';
 
-class Blog extends React.Component {
+class BlogUpdater extends React.Component {
   constructor(props) {
     super(props);
-    this.handleTitleChange = this.handleTitleChange.bind(this);
-    this.handleBodyChange = this.handleBodyChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.handleTitleUpdate = this.handleTitleUpdate.bind(this);
     this.handleBodyUpdate = this.handleBodyUpdate.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
+    this.state = {
+      retrievedData: false,
+      blogs: [],
+      currentId: -1,
+      title: "",
+      body: "",
+      updateTitle: "",
+      updateBody: ""
+    };
   }
-
-  state = {
-    retrievedData: false,
-    blogs: [],
-    currentId: -1,
-    title: "",
-    body: "",
-    updateTitle: "",
-    updateBody: ""
-  };
 
   componentDidMount() {
     this.getBlogsFromDb();
@@ -39,11 +34,14 @@ class Blog extends React.Component {
 
   updateCurrentId = () => {
     if (this.state.blogs.length) {
-      let maxId = this.state.blogs.reduce((prev, current) =>
-        prev.id > current.id ? prev.id : current.id
-      );
+      let maxId = -1;
+      for (var i = 0; i < this.state.blogs.length; i++) {
+        if (this.state.blogs[i].id > maxId) {
+          maxId = this.state.blogs[i].id;
+        }
+      }
       this.setState({ currentId: maxId });
-      console.log(maxId);
+      console.log("Max Id " + maxId);
     }
   };
 
@@ -108,14 +106,6 @@ class Blog extends React.Component {
       .then(res => console.log(res));
   };
 
-  handleTitleChange(e) {
-    this.setState({ title: e.target.value });
-  }
-
-  handleBodyChange(e) {
-    this.setState({ body: e.target.value });
-  }
-
   handleTitleUpdate(e) {
     this.setState({ updateTitle: e.target.value });
   }
@@ -124,29 +114,9 @@ class Blog extends React.Component {
     this.setState({ updateBody: e.target.value });
   }
 
-  handleSubmit(e) {
-    e.preventDefault();
-    this.addBlogToDb();
-    this.setState({
-      blogs: [
-        {
-          id: this.state.currentId + 1,
-          title: this.state.title,
-          body: this.state.body,
-          editMode: false
-        },
-        ...this.state.blogs
-      ],
-      currentId: this.state.currentId + 1,
-      title: "",
-      body: ""
-    });
-  }
-
   handleUpdate(index, title, body) {
     let updatedBlogs = this.state.blogs;
-    let newTitle =
-      this.state.updateTitle === "" ? title : this.state.updateTitle;
+    let newTitle = this.state.updateTitle === "" ? title : this.state.updateTitle;
     let newBody = this.state.updateBody === "" ? body : this.state.updateBody;
     updatedBlogs[index].title = newTitle;
     updatedBlogs[index].body = newBody;
@@ -173,34 +143,62 @@ class Blog extends React.Component {
 
   render() {
     return (
-      <div>
-        <div className="create-form">
-          <form onSubmit={this.handleSubmit}>
-            <label>
-              Title:
-              <input
-                type="text"
-                name="title"
-                value={this.state.title}
-                onChange={this.handleTitleChange}
-              />
-            </label>
-            <label>
-              Body:
-              <textarea
-                name="body"
-                value={this.state.body}
-                onChange={this.handleBodyChange}
-              />
-            </label>
-            <input type="submit" value="Submit" />
-          </form>
-        </div>
-        <div className="posts-panel">
+      <div className="parent">
+        <div className="posts-panel grid">
           <header className="panel-header">
             <h1 className="panel-title"> Featured Blogs </h1>
           </header>
           <div className="panel-content">
+            <section className="pinned-post">
+              <div className="post-item">
+                <a href="#" className="post-thumbnail">
+                  <img
+                    src="https://static.pexels.com/photos/66274/sunset-poppy-backlight-66274.jpeg"
+                    alt=""
+                  />
+                </a>
+                <div className="post-text">
+                  <a href="#">
+                    <h3 className="post-title">Post title place-holder</h3>
+                  </a>
+                  <div className="post-meta">
+                    <span className="meta">
+                      <span
+                        className="meta-icon fa fa-user-circle-o"
+                        aria-hidden="true"
+                      />
+                      <a className="meta-text">Steve Jobs</a>
+                    </span>
+                    <span className="meta">
+                      <span
+                        className="meta-icon fa fa-clock-o"
+                        aria-hidden="true"
+                      />
+                      <span className="meta-text">22/06/2030</span>
+                    </span>
+                  </div>
+
+                  <div className="post-summary">
+                    <p>
+                      Your work is going to fill a large part of your life, and
+                      the only way to be truly satisfied is to do what you
+                      believe is great work. And the only way to do great work
+                      is to love what you do. If you haven't found it yet, keep
+                      looking. Don't settle. As with all matters of the heart,
+                      you'll know when you find it....
+                          <a href="#" className="post-read-more">
+                        Read more
+                            <span
+                          className="fa fa-chevron-circle-right"
+                          aria-hidden="true"
+                        />
+                      </a>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
             <section className="posts-list">
               {this.state.blogs.map((blog, index) => (
                 <div className="post-item" key={index}>
@@ -235,7 +233,7 @@ class Blog extends React.Component {
                         {blog.body}
                         <a href="#" className="post-read-more">
                           Read more
-                          <span
+                              <span
                             className="fa fa-chevron-circle-right"
                             aria-hidden="true"
                           />
@@ -243,10 +241,10 @@ class Blog extends React.Component {
                       </p>
                       <button onClick={() => this.removeBlogPost(blog.id)}>
                         Delete
-                      </button>
+                          </button>
                       <button onClick={() => this.enableEditModeForBlog(index)}>
                         Edit Mode
-                      </button>
+                          </button>
                       {blog.editMode && (
                         <div>
                           <label>Title: {blog.title}</label>
@@ -281,4 +279,5 @@ class Blog extends React.Component {
     );
   }
 }
-export default Blog;
+
+export default BlogUpdater;

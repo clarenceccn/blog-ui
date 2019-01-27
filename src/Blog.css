@@ -1,16 +1,75 @@
+.parent {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.create-form {
+  flex: 0 1 100%;
+  margin-right: auto;
+  margin-left: auto;
+  width: 100vw;
+  padding-right: 0.625rem;
+  padding-left: 0.625rem;
+  margin: 1.25rem 0.625rem;
+  background-color: #fefefe;
+  border-radius: 0;
+  box-shadow: 0 0 0.25rem 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Below is for nav  */
+
+.hover-underline-menu {
+  width: 100%;
+}
+
+.hover-underline-menu .menu {
+  background-color: #2C3840;
+}
+
+.hover-underline-menu .menu a {
+  color: #fefefe;
+  padding: 1.2rem 1.5rem;
+}
+
+.hover-underline-menu .menu .underline-from-center {
+  position: relative;
+}
+
+.hover-underline-menu .menu .underline-from-center::after {
+  content: "";
+  position: absolute;
+  top: calc(100% - 0.125rem);
+  border-bottom: 0.125rem solid #fefefe;
+  left: 50%;
+  right: 50%;
+  transition: all 0.5s ease;
+}
+
+.hover-underline-menu .menu .underline-from-center:hover::after {
+  left: 0;
+  right: 0;
+  transition: all 0.5s ease;
+}
+
+
+/* Below is for posts  */
+
 .posts-panel {
+    flex: 1 0 100%;
     max-width: 75rem;
     margin-right: auto;
     margin-left: auto;
-    width: 100%;
-    float: left;
+    width: 100vw;
     padding-right: 0.625rem;
     padding-left: 0.625rem;
-    float: none !important;
     margin: 1.25rem 0.625rem;
     background-color: #fefefe;
     border-radius: 0;
-    box-shadow: 0 0 0.25rem 0 rgba(0, 0, 0, 0.2);
 }
 
 .posts-panel::before,
@@ -54,7 +113,7 @@ screen and (min-width: 40em) {
     float: left;
     padding-right: 0.625rem;
     padding-left: 0.625rem;
-    border-bottom: 0.25rem solid #e6e6e6;
+    border-bottom: 0.15rem solid #e6e6e6;
 }
 
 .posts-panel .panel-header::before,
