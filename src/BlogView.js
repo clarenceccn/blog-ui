@@ -8,11 +8,6 @@ class BlogView extends React.Component {
     this.state = {
       retrievedData: false,
       blogs: [],
-      currentId: -1,
-      title: "",
-      body: "",
-      updateTitle: "",
-      updateBody: ""
     };
   }
 
@@ -25,22 +20,8 @@ class BlogView extends React.Component {
       .then(data => data.json())
       .then(res => {
         this.setState({ blogs: this.parseBlogs(res.data) });
-        this.updateCurrentId();
         console.log(this.parseBlogs(res.data));
       });
-  };
-
-  updateCurrentId = () => {
-    if (this.state.blogs.length) {
-      let maxId = -1;
-      for (var i = 0; i < this.state.blogs.length; i++) {
-        if (this.state.blogs[i].id > maxId) {
-          maxId = this.state.blogs[i].id;
-        }
-      }
-      this.setState({ currentId: maxId });
-      console.log("Max Id " + maxId);
-    }
   };
 
   parseBlogs = data => {
@@ -146,7 +127,7 @@ class BlogView extends React.Component {
                     </div>
                     <div className="post-summary">
                       <p>
-                        {blog.body} 
+                        {blog.body}
                         <a href="www.google.com" className="post-read-more">
                           Read more
                           <span

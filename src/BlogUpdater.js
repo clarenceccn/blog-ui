@@ -34,15 +34,20 @@ class BlogUpdater extends React.Component {
 
   updateCurrentId = () => {
     if (this.state.blogs.length) {
-      let maxId = -1;
-      for (var i = 0; i < this.state.blogs.length; i++) {
-        if (this.state.blogs[i].id > maxId) {
-          maxId = this.state.blogs[i].id;
-        }
-      }
+      const maxId = this.calculateMaxId();
       this.setState({ currentId: maxId });
       console.log("Max Id " + maxId);
     }
+  };
+
+  calculateMaxId = () => {
+    let maxId = -1;
+    for (var i = 0; i < this.state.blogs.length; i++) {
+      if (this.state.blogs[i].id > maxId) {
+        maxId = this.state.blogs[i].id;
+      }
+    }
+    return maxId;
   };
 
   parseBlogs = data => {
